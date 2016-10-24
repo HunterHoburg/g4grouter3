@@ -3,12 +3,24 @@ exports.seed = function(knex, Promise) {
     knex('test.friends').del(),
 
     knex('test.friends').insert({
-      user_id: 1,
-      friend_id_array: [2, 3]
+      id: 1,
+      friend_id: 2
     }),
     knex('test.friends').insert({
-      user_id: 2,
-      friend_id_array: [1, 3]
+      id: 1,
+      friend_id: 3
+    }),
+    knex('test.friends').insert({
+      id: 2,
+      friend_id: 1
+    }),
+    knex('test.friends').insert({
+      id: 2,
+      friend_id: 3
+    }),
+    knex('test.friends').insert({
+      id: 3,
+      friend_id: 1
     })
   )
 }
