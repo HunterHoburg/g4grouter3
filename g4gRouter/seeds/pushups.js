@@ -22,6 +22,14 @@ exports.seed = function(knex, Promise) {
     knex('test.pushups').insert({
       amount: 80,
       date: '2016-10-23 12:44:34.485341'
+    }),
+    knex('test.pushups').insert({
+      amount: 80,
+      date: '2016-10-20 12:44:34.485341'
+    }),
+    knex('test.pushups').insert({
+      amount: 60,
+      date: '2016-10-22 12:44:34.485341'
     })
   )
 }

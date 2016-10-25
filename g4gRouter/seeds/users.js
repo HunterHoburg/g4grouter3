@@ -4,7 +4,6 @@ exports.seed = function(knex, Promise) {
     knex.raw('ALTER SEQUENCE test.users_user_id_seq RESTART WITH 1;'),
 
     knex('test.users').insert({
-      user_id: 1,
       username: 'hhoburg',
       role: null,
       password: 'password',
@@ -17,10 +16,12 @@ exports.seed = function(knex, Promise) {
       zip: 85251,
       salt: 0909742091098,
       user_agreement: true,
-      email: 'hhoburg@gmail.com'
+      email: 'hhoburg@gmail.com',
+      gender: 'Male',
+      state: 'AZ',
+      city: 'Phoenix'
     }),
     knex('test.users').insert({
-      user_id: 2,
       username: 'mleonard',
       role: null,
       password: 'password',
@@ -33,10 +34,12 @@ exports.seed = function(knex, Promise) {
       zip: 85251,
       salt: 0909742091098,
       user_agreement: true,
-      email: 'mleonard@gmail.com'
+      email: 'mleonard@gmail.com',
+      gender: 'Female',
+      state: 'AZ',
+      city: 'Phoenix'
     }),
     knex('test.users').insert({
-      user_id: 3,
       username: 'rhoburg',
       role: null,
       password: 'password',
@@ -49,7 +52,10 @@ exports.seed = function(knex, Promise) {
       zip: 85251,
       salt: 0909742091098,
       user_agreement: true,
-      email: 'rhoburg@gmail.com'
+      email: 'rhoburg@gmail.com',
+      gender: 'Male',
+      state: 'CO',
+      city: 'Phoenix'
     })
   )
 }

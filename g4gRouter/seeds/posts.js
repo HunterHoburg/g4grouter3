@@ -33,7 +33,7 @@ exports.seed = function(knex, Promise) {
       likes: [1, 3],
       post_date: knex.fn.now(),
       // post_id: 4,
-      has_comments: false
+      has_comments: true
     }),
     knex('test.posts').insert({
       user_id: 2,

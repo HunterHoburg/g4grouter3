@@ -22,6 +22,14 @@ exports.seed = function(knex, Promise) {
     knex('test.planks').insert({
       amount: 200000,
       date: '2016-10-23 12:44:34.485341'
+    }),
+    knex('test.planks').insert({
+      amount: 900000,
+      date: '2016-10-21 12:44:34.485341'
+    }),
+    knex('test.planks').insert({
+      amount: 170000,
+      date: '2016-10-24 12:44:34.485341'
     })
   )
 }
