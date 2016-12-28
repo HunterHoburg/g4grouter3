@@ -6,10 +6,4 @@ module.exports = {
     useNullAsDefault: true
   }
 
-  // production: {
-  //   client: 'pg',
-  //   connection: process.env.HEROKU_POSTGRESQL_GOLD_URL,
-  //   useNullAsDefault: true
-  // }
-
 }

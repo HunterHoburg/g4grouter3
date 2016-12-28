@@ -2,13 +2,29 @@ var express = require('express');
 var router = express.Router();
 // var http = require('http');
 var knex = require('../db/knex');
-var bcrypt = require('bcrypt');
+// var bcrypt = require('bcrypt');
 var zipcodes = require('zipcodes');
+var env = require('dotenv').config();
 
+knex.migrate.latest();
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('../public/views/index', { title: 'G4G' });
 });
+
+router.get('/username', function(req, res, next) {
+  knex('test.users').where({
+    username: req.headers.username
+  }).orWhere({
+    email: req.headers.email
+  }).select().then(function(data) {
+    if(data.length > 0) {
+      res.send(false)
+    } else {
+      res.send(true)
+    }
+  })
+})
 
 router.post('/register', function(req, res, next) {
   console.log(req.body);
@@ -79,7 +95,7 @@ router.get('/profileData', function(req, res, next) {
 
 router.get('/profile/notifications', function(req, res, next) {
   knex('test.notifications').where({
-    'test.notifications.user_id': 5
+    'test.notifications.user_id': req.headers.user_id
   }).join('test.users', 'test.notifications.friend_id', '=', 'test.users.user_id').select('test.notifications.id', 'test.notifications.type', 'test.notifications.date','test.users.first', 'test.users.last', 'test.users.user_id').then(function(data) {
     res.send(data);
   })
@@ -162,6 +178,24 @@ router.post('/posts', function(req, res, next) {
   }, '*').then(function(post) {
     console.log('post created: ', post);
     res.send(post)
+  })
+})
+
+router.delete('/posts', function(req, res, next) {
+  console.log('delete posts: ', req.headers);
+  knex('test.posts').where({
+    post_id: req.headers.post_id,
+    user_id: req.headers.user_id
+  }).delete().then(function(){
+    if (req.headers.has_comments) {
+      knex('test.post_comments').where({
+        post_id: req.headers.post_id
+      }).select('*').delete().join('test.comments', 'test.post_comments.comment_id', '=', 'test.comments.id').delete().then(function(){
+        res.send('deleted it all')
+      })
+    } else {
+      res.send('deleted the post')
+    }
   })
 })
 
@@ -258,7 +292,7 @@ next) {
   console.log('getting friends');
   knex('test.friends').where({
     id: req.headers.user_id
-  }).join('test.users', 'test.friends.friend_id', '=', 'test.users.user_id').select('test.users.first', 'test.users.last', 'test.users.birth_day', 'test.users.birth_month', 'test.users.birth_year', 'test.users.country', 'test.users.zip', 'test.users.user_id').then(function(data) {
+  }).join('test.users', 'test.friends.friend_id', '=', 'test.users.user_id').select('test.users.first', 'test.users.last', 'test.users.birth_day', 'test.users.birth_month', 'test.users.birth_year', 'test.users.country', 'test.users.zip', 'test.users.user_id', 'test.users.state').then(function(data) {
     console.log('getting friend info');
     if(data) {
       res.send(data);
@@ -434,8 +468,10 @@ router.post('/friend/request', function(req, res, next) {
           user_id: req.body.friend_id,
           friend_id: req.body.user_id,
           type: 'request',
-          date: knex.fn.now()
+          date: knex.fn.now(),
+          seen: false
         }).then(function(da) {
+          console.log(da);
           res.send('request made');
         })
       })
@@ -443,11 +479,30 @@ router.post('/friend/request', function(req, res, next) {
   })
 })
 
-// router.post('/friend/response', function(req, res, next) {
-//   knex('test.requests').where({
-//     requester_id:
-//   })
-// })
+router.post('/friend/response', function(req, res, next) {
+  knex('test.requests').where({
+    requester_id: req.body.friend_id,
+    requested_id: req.body.user_id
+  }).delete().then(function() {
+    knex('test.notifications').where({
+      user_id: req.body.user_id,
+      friend_id: req.body.friend_id,
+      type: 'request'
+    }).delete().then(function() {
+      knex('test.friends').insert({
+        id: req.body.user_id,
+        friend_id: req.body.friend_id
+      }).then(function() {
+        knex('test.friends').insert({
+          friend_id: req.body.user_id,
+          id: req.body.friend_id
+        }).then(function() {
+          res.send('success');
+        })
+      })
+    })
+  })
+})
 
 
 
